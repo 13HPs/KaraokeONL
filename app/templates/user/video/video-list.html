@@ -1,0 +1,51 @@
+{% extends "user/layout.html" %}
+{% block user_content %}
+<link rel="stylesheet" href="/static/css/user/video/video-list.css">
+<div class="container mt-5">
+    <div class="header-container">
+        <div class="content-header">Video của bạn</div>
+        <button class="btn btn-success" type="button" onclick="window.location.href='{{ url_for('user.video.add') }}';">
+            Thêm
+        </button>
+    </div>
+    <div class="table-header-row">
+        <div></div>
+        <div class="header-title">Title</div>
+        <div>Edit</div>
+        <div>Public</div>
+    </div>
+    {% for video in videos %}
+    <div class="table-row" data-video-id="{{ video.id }}">
+        <div class="table-cell">
+            <img class="video-thumbnail" {% if video.thumbnail_url %}src="{{ video.thumbnail_url }}" {% endif %}>
+        </div>
+        <div class="row-title">
+            <span>{{ video.title}}</span>
+        </div>
+        <div class="table-cell">
+            <button
+                    data-bs-toggle="modal"
+                    data-bs-target="#video-edit-popup"
+                    class="TUX-button"
+                    type="button"
+                    data-id="{{ video.id }}"
+                    data-title="{{ video.title }}"
+                    data-thumbnail-url="{{ video.thumbnail_url }}"
+                    onclick="populateModal(this)">
+                Chỉnh sửa
+            </button>
+        </div>
+        <div class="table-cell">
+            <label class="switch">
+                <input type="checkbox" id="is-public-{{ video.id }}"
+                       data-video-id="{{ video.id }}"
+                       {% if video.public %}checked{% endif %} onclick="setPublic(this)">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% include "user/video/modal/video_edit_popup.html" %}
+<script src="/static/js/user/video/video_list.js"></script>
+{% endblock %}

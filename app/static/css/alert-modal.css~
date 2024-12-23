@@ -1,0 +1,23 @@
+/* Make modal body larger */
+.custom-modal-body {
+    font-size: 1.2rem;
+    padding: 20px;
+}
+
+/* Remove borders from modal body */
+.custom-modal-body {
+    border: none;
+}
+
+/* Optional: Remove background shadow if needed */
+.modal-content {
+    border: none;
+}
+.custom-alert-content{
+    font-size: 1.2rem;
+    padding: 20px;
+    display: flex; /* Use flexbox */
+    flex-wrap: wrap; /* Allow items to wrap to the next row */
+    gap: 10px; /* Optional: Add spacing between items */
+    width: 300px; /* Set a fixed width for the container */
+}

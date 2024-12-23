@@ -1,0 +1,221 @@
+<div class="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <!-- Left region for new features (5 buttons) -->
+    <div class="d-flex flex-column justify-content-center me-4"> <!-- space-y-8 increases space between buttons -->
+        <!-- Button Like -->
+        <div class="d-flex flex-column align-items-center mb-4">
+            <button id="like-button"
+                    {% if session['user'] %}
+                    onclick="video_like('{{ session['user']['id'] }}')"
+                    {% else %}
+                    onclick="openLoginModal()"
+                    {% endif %}
+                    class="btn btn-light rounded-circle shadow-sm p-3"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="left"
+                    title="Tôi thích video này">
+                <i class="bi bi-hand-thumbs-up"></i>
+            </button>
+            <span id="like-count" class="small mt-1">1</span> <!-- Initial like count -->
+        </div>
+
+        <!-- Button Dislike -->
+        <div class="d-flex flex-column align-items-center mb-4">
+            <button id="dislike-button"
+                    {% if session['user'] %}
+                    onclick="dislike()"
+                    {% else %}
+                    onclick="openLoginModal()"
+                    {% endif %}
+                    class="btn btn-light rounded-circle shadow-sm p-3"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="left"
+                    title="Tôi không thích video này">
+                <i class="bi bi-hand-thumbs-down"></i>
+            </button>
+            <span id="dislike-count" class="text-sm"></span> <!-- Initial dislike count -->
+        </div>
+
+        <!-- Button Comment -->
+        <div class="d-flex flex-column align-items-center mb-4">
+            <button id="comment-button" class="btn btn-light rounded-circle shadow-sm p-3"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="left"
+                    title="Bình luận">
+                <i class="bi bi-chat-right-text"></i>
+            </button>
+            <span id="comment-count" class="text-sm"></span> <!-- Initial comment count -->
+        </div>
+
+        <!-- Button Share -->
+        <div class="d-flex flex-column align-items-center mb-4">
+            <button id="share-button" class="btn btn-light rounded-circle shadow-sm p-3"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="left"
+                    title="Chia sẻ cho bạn bè"
+                    onclick="openShareModal()">
+                <i class="bi bi-share-fill"></i>
+            </button>
+            {% include 'user/video/modal/share.html' %}
+        </div>
+
+        <!-- Button Setting -->
+        <div class="dropdown">
+            <button id="settings-button" class="btn btn-light rounded-circle shadow-sm p-3 dropdown-toggle"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="left"
+                    title="Cài đặt"
+                    onclick="openSettingsModal()">
+                <i class="bi bi-gear"></i>
+            </button>
+        </div>
+        {% include 'user/video/modal/setting.html' %}
+
+    </div>
+
+    <div class="vh-100 bg-light d-flex flex-column" style="position: relative">
+        <!-- VÙNG TRÊN CÙNG CHƯA CÓ DIV -->
+        {% include 'user/video/section/video_music.html' %}
+        <!-- HẾT VÙNG TRÊN CÙNG -->
+    </div>
+
+
+
+    <!-- Video Section (Centered) -->
+    <div class="position-relative bg-white shadow rounded overflow-hidden d-flex flex-column align-items-center mb-4"
+         style="width: 55%; height: 80%;">
+        <!-- Video Container -->
+        <div class="position-relative w-100 h-100 video-container">
+            <!-- Video player -->
+            <video id="video-player" class="position-relative w-100 h-100" controls autoplay muted>
+                <!-- Trình duyệt của bạn không hỗ trợ thẻ video -->
+            </video>
+            <!-- Thông tin hiển thị trên video -->
+            <div id="video-info-overlay" class="position-absolute text-white p-3"
+                 style="background: rgba(0, 0, 0, 0.5); width: 100%; bottom: 80px; left: 0;">
+                <!-- Nội dung -->
+            <!-- Tiêu đề video -->
+                <h5 id="video-title" class="fw-bold mb-2"></h5>
+                <!-- Người đăng và thời gian -->
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong>Người đăng:</strong> <span id="uploader"></span>
+                    </div>
+                    <div>
+                        <strong>Thời gian:</strong> <span id="video-created-at"></span>
+                    </div>
+                </div>
+                <!-- Tên bài hát -->
+                <div>
+                    <strong>Bài hát:</strong> <span id="video-music"></span>
+                </div>
+            </div>
+            <!-- Thêm phần hiển thị lyrics -->
+            <div id="lyrics-overlay" class="position-absolute text-center w-100"
+                 style="top: 20px; left: 0; text-shadow: 2px 2px 4px #000;z-index: 1000;">
+                <!-- Dòng 1 -->
+                <div id="lyric-line-1" class="lyric-line mb-2">
+                    <!-- Nội dung dòng 1 sẽ được hiển thị ở đây -->
+                </div>
+                <!-- Dòng 2 -->
+                <div id="lyric-line-2" class="lyric-line">
+                    <!-- Nội dung dòng 2 sẽ được hiển thị ở đây -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Comment Section (Centered) -->
+    <div id="comment-section" class="position-relative bg-white shadow rounded d-flex flex-column align-items-center mb-4"
+         style="width: 55%; height: 80%; background-color: #f8f9fa;">
+        <!-- Comment Container -->
+        <div class="position-relative w-100 h-100 p-3 overflow-auto">
+            <h5>Bình luận</h5>
+            <div id="comment-container"></div>
+        </div>
+
+        <!-- Input area for new comment (fixed at the bottom) -->
+        <div class="input-group" style="position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; background-color: #f8f9fa;">
+            <input id="comment-input" type="text" class="form-control" placeholder="Nhập bình luận..." aria-label="Nhập bình luận">
+            {#            <button id="send-comment" class="btn btn-primary" type="button" onclick="insertComment()">Gửi</button>#}
+            <button id="send-comment" class="btn btn-primary" type="button">Gửi</button>
+
+        </div>
+    </div>
+
+    <!-- Buttons for navigating videos (outside the video, on the right) -->
+    <div class="d-flex flex-column ms-4" style="gap: 2rem;">
+        <button id="prev-button" class="btn btn-light rounded-circle shadow-sm p-3">
+            <i class="bi bi-arrow-up"></i>
+        </button>
+        <button id="next-button" class="btn btn-light rounded-circle shadow-sm p-3">
+            <i class="bi bi-arrow-down"></i>
+        </button>
+    </div>
+
+    <!-- Description Section (Similar to Comment Section) -->
+    <div id="description-section" class="position-relative bg-white shadow rounded overflow-hidden d-flex flex-column align-items-center mb-4 d-none"
+         style="width: 30%; height: 80%; background-color: #f8f9fa;">
+        <!-- Button Close ("X") -->
+        <button id="close-description" class="btn-close position-absolute top-0 end-0 m-3" aria-label="Close"></button>
+        <!-- Description Container -->
+        <div id="description-container" class="position-relative w-100 h-100 p-3 overflow-auto">
+            <!-- Video title -->
+            <h5 id="video-title" class="fw-bold mb-4">Nội dung mô tả</h5>
+
+            <!-- Thông tin số liệu -->
+            <div class="d-flex justify-content-around text-center mb-4">
+                <!-- Lượt thích -->
+                <div>
+                    <div class="fs-2 fw-bold" id="like-count-description">0</div>
+                    <div class="text-muted small">Lượt thích</div>
+                </div>
+                <!-- Số bình luận -->
+                <div>
+                    <div class="fs-2 fw-bold" id="comment-count-description">0</div>
+                    <div class="text-muted small">Số bình luận</div>
+                </div>
+                <!-- Người đăng -->
+                <div>
+                    <div class="fs-5 fw-bold" id="uploader">Người đăng</div>
+                    <div class="text-muted small">Người đăng</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- Modal structure -->
+
+    <!-- Modal cho nút Lưu vào danh sách phát -->
+    {% include 'user/video/modal/save_playlist.html' %}
+    <!-- Modal tạo playlist mới -->
+    {% include 'user/video/modal/create_playlist.html' %}
+    <!-- Modal thông báo Phụ đề -->
+    {% include 'user/video/modal/subtitle.html' %}
+    <!-- Modal Báo vi phạm -->
+    {% include 'user/video/modal/violation_notification.html' %}
+    <!-- Feedback Section (Initially hidden) -->
+    {% include 'user/video/modal/feedback_section.html' %}
+    <!-- Modal Cảnh Báo Vi Phạm Bình Luận -->
+    {% include 'user/video/modal/comment_hate_warning.html' %}
+
+</div>
+
+<script>
+    let sessionUser = {
+        id: null
+    };
+    {% if session['user'] %}
+        sessionUser = {{ session['user']|tojson }};
+        sessionId = sessionUser.id.toString();
+    {% endif %}
+</script>
+
+<script src="/static/js/user/video/video_variable.js"></script>
+<script src="/static/js/user/video/video_like_toggle_button.js"></script>
+<script src="/static/js/user/video/video_button_add_event.js"></script>
+<script src="/static/js/user/video/video_comment_render.js"></script>
+<script src="/static/js/user/video/video_comment_function.js"></script>
+<script src="/static/js/user/video/video_comment_add_event.js"></script>
+<script src="/static/js/user/video/video_player.js"></script>

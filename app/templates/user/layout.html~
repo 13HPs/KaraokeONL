@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- Topbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top no-scroll">
+        {% include 'components/user/topbar.html' %}
+    </nav>
+    <div class="d-flex flex-grow-1 no-scroll">
+        <!-- Sidebar -->
+        <div id="sidebar" class="bg-light">
+            {% include 'components/user/sidebar.html' %}
+        </div>
+
+        <!-- Page content -->
+        <div id="content" class="flex-grow-1 p-4 no-scroll">
+            {% block user_content %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}

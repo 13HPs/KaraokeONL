@@ -1,0 +1,51 @@
+<div id="login-popup" tabindex="-1" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <p class="h4 fw-semibold">Login to your account</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('auth.login') }}" onsubmit="login(event)">
+                    {{ login_form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ login_form.username(class="form-control", id="login-username", placeholder="Tên đăng nhập/Email") }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ login_form.password(class="form-control", id="login-password", placeholder="Mật khẩu") }}
+                    </div>
+
+                    <p class="mb-3 small">
+                        <a href="/forgot-password" class="text-primary">Reset your password?</a>
+                    </p>
+
+                    <button {{ login_form.submit(id="login-submit-btn") }} class="btn btn-primary w-100">
+                    </button>
+                </form>
+
+                <div class="d-flex align-items-center my-4">
+                    <hr class="flex-grow-1">
+                    <span class="px-2 text-muted">OR</span>
+                    <hr class="flex-grow-1">
+                </div>
+
+                <div class="d-grid gap-2 mb-3">
+                    <a href="{{ url_for('auth.google.login') }}" class="btn btn-primary d-flex align-items-center justify-content-center">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="me-2" width="18" height="18">
+                        Continue with Google
+                    </a>
+                </div>
+
+                <div class="mt-4 text-center small">
+                    Don't have an account?
+                    <a data-bs-toggle="modal" data-bs-target="#register-popup"
+                       class="text-primary">Sign up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/auth/login.js"></script>

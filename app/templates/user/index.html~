@@ -1,0 +1,9 @@
+{% extends "user/layout.html" %}
+
+{% block user_content %}
+
+    {% include "user/video/video.html" %}
+
+
+
+{% endblock %}
